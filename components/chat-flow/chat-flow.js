@@ -11,7 +11,6 @@
   "use strict";
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var roots = document.querySelectorAll("[data-cx]");
-  if (!roots.length) return;
 
   function each(list, fn) { Array.prototype.forEach.call(list, fn); }
   function kindOf(el) {
@@ -24,7 +23,10 @@
   }
   function textLen(el) { return (el.textContent || "").replace(/\s+/g, " ").length; }
 
-  function setup(root) {
+  // opts.autoplay: play on first scroll into view (default true). false = show the final frame.
+  function setup(root, opts) {
+    opts = opts || {};
+    if (root.__cx) root.__cx.stop();
     var bodies = root.querySelectorAll(".cx-body");
     var steps = root.querySelectorAll(".fx li");
     var timers = [];
@@ -123,7 +125,8 @@
       btn.addEventListener("click", function () { noAuto(); finish(); });
     });
 
-    if (reduce || !("IntersectionObserver" in window)) { finish(); return; }
+    root.__cx = { play: play, finish: finish, stop: function () { noAuto(); stop(); } };
+    if (opts.autoplay === false || reduce || !("IntersectionObserver" in window)) { finish(); return root.__cx; }
     arm();
     io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
@@ -133,7 +136,10 @@
       });
     }, { threshold: 0.3 });
     io.observe(root.querySelector(".cx") || root);
+    return root.__cx;
   }
 
-  each(roots, setup);
+  each(roots, function (r) { setup(r); });
+  // For pages that build chats at runtime: ChatFlow.mount(element, { autoplay: false })
+  window.ChatFlow = { mount: setup };
 })();

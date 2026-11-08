@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AAI · local</title>
+<link rel="icon" href="/app/img/mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/chat-flow/chat-flow.css">
+<link rel="stylesheet" href="/app/app.css">
+<script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+<div class="shell">
+  <aside class="side" aria-label="Steps">
+    <a class="side-brand" href="#overview"><img src="/app/img/mark.svg" alt="" width="20" height="20"><b>AAI</b><span>local</span></a>
+    <div class="side-site" id="side-site"></div>
+    <nav class="side-nav" id="side-nav"></nav>
+    <p class="side-foot"><a href="https://github.com/NetanelBaruch/aai/blob/main/SPEC.md" target="_blank" rel="noopener">Spec</a> · <a href="https://gtmagentcy.com/aai/" target="_blank" rel="noopener">GTMagentcy</a></p>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <form class="top-form" id="top-form">
+        <label class="sr" for="top-url">Site to check</label>
+        <input id="top-url" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="yourcompany.com">
+        <button class="btn btn-outline" type="submit">Check</button>
+      </form>
+      <span class="top-status" id="top-status" role="status" aria-live="polite"></span>
+    </header>
+    <main id="view" tabindex="-1"></main>
+  </div>
+</div>
+<script src="/chat-flow/chat-flow.js"></script>
+<script src="/app/app.js"></script>
+</body>
+</html>

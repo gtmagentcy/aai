@@ -53,21 +53,35 @@ The full definition and scoring are in [SPEC.md](SPEC.md).
 
 ## Quick start
 
-**1. Lint your site** (public pages only, no dependencies, Node 18+):
+**1. Check your site and open the app** (public pages only, no dependencies, Node 18+):
 
 ```sh
 npx github:NetanelBaruch/aai example.com
 ```
 
-It checks the public half of your AAI and prints a fix for every gap:
+The terminal prints every check with a fix. Then a local app opens at `http://localhost:4319`:
 
-```
-AAI lint · https://example.com/
-  Act
-    ✓ A booking link in the HTML
-    ✗ A form an agent can submit
-      fix: Give your core form a real action URL that accepts a plain POST, and say so in agents.md.
-```
+- **The agent's view.** Your site in two chats, side by side: what an agent does on it today,
+  built from the real checks, and the same job once your AAI is built.
+- **The steps**, in the sidebar: Discover, Act, Value before the gate, Boundaries, Trust, each
+  with its checks, the points at stake and a fix.
+- **Build your AAI.** A form pre-filled from the scan. As you type, it writes `llms.txt`,
+  `agents.md`, `openapi.json` and `.well-known/mcp.json`, and the "with AAI" chat plays your flow.
+  Copy or download each file, or start with `--dir ./public` and save them straight into your
+  project.
+
+![The agent's view](docs/img/app-overview.png)
+![Build your AAI](docs/img/app-builder.png)
+
+| Flag | What it does |
+|---|---|
+| `--dir ./public` | Lets the app save the files into that folder (it asks before replacing) |
+| `--no-open` | Report only, no app |
+| `--json` | Machine-readable result, no app |
+| `--strict` | Exit 1 if any check fails, no app (for CI) |
+| `--port 4319` | Port for the app (next free one if taken) |
+
+The app binds to 127.0.0.1 only. Nothing you type leaves your computer.
 
 **2. Fill in the templates** in [`templates/`](templates): `llms.txt`, `agents.md`,
 `.well-known/mcp.json`, `openapi.json`.
@@ -99,7 +113,8 @@ docs/implementing.md     the build order, by points recovered
 docs/patterns/           one page per pattern, with request and response shapes
 docs/industries.md       what AAI could look like for airlines, games, hotels, clinics, banks, cities
 templates/               llms.txt, agents.md, .well-known/mcp.json, openapi.json
-cli/aai-lint.mjs         the lint
+cli/                     the lint (lint.mjs) and the local app server (serve.mjs)
+app/                     the local app: the agent's view and the builder
 components/chat-flow/    the animated chat mockup
 examples/                implementations, ours first
 ```
