@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>chat-flow demo · AAI</title>
+<link rel="stylesheet" href="chat-flow.css">
+<script>document.documentElement.classList.add("js")</script>
+<style>
+  body{margin:0;font-family:var(--font);color:var(--ink);background:#fff;font-size:16px;line-height:1.5}
+  main{max-width:1200px;margin:0 auto;padding:48px 24px}
+  h1{font-size:32px;margin:0 0 8px} h3{font-size:22px;margin:0} p{margin:0}
+  .eyebrow{font-size:13px;letter-spacing:.05em;text-transform:uppercase;font-weight:500;color:var(--accent-text);margin:0 0 10px}
+  .intro{color:var(--muted);max-width:62ch;margin-bottom:24px}
+</style>
+</head>
+<body>
+<main>
+  <h1>chat-flow</h1>
+  <p class="intro">Two flows from gtmagentcy.com/aai/. Every message is in the HTML: without JavaScript, or with reduced motion, you see the final frame. With motion, each block plays once when it scrolls into view.</p>
+  <article class="cx-demo cx-lead" aria-labelledby="cx0-h">
+      <div class="cx-demo-head">
+        <p class="eyebrow">Start here · Self-serve sign-up</p>
+        <h3 id="cx0-h">The agent signs you up, after the login already works.</h3>
+        <p>A developer asks their coding agent to add sign-in with an auth provider. Without AAI the agent stops at the sign-up form. With it, the agent reaches a working login first, then creates the account with the person's own email and hands over the link to it.</p>
+      </div>
+      <div class="ba" data-cx>
+        <p class="ba-prompt"><span class="ar-k">The prompt, in both chats</span>“Add sign-in to my Next.js app with Passline. Get me to a working login.”</p>
+        <div class="ba-grid">
+          <div class="ba-col is-before">
+            <div class="ba-head"><b>Without AAI</b><span class="ar-badge is-fail">Readable</span></div>
+            <div class="cx cx--cursor">
+              <div class="cx-bar" aria-hidden="true"><span class="cx-dots"><i></i><i></i><i></i></span><span class="cx-app">Coding agent</span><span class="cx-tag">Illustration</span></div>
+              <div class="cx-body" tabindex="0" role="region" aria-label="Before: the coding agent cannot sign up and hands the job back">
+                <div class="cx-msg cx-user">Add sign-in to my Next.js app with Passline. Get me to a working login.</div>
+                <div class="cx-tool"><span class="cx-ic cx-ic--read"></span><span class="cx-tool-l">Read</span><span class="cx-tool-t mono">passline.dev/llms.txt</span><span class="cx-st">Found</span></div>
+                <div class="cx-tool"><span class="cx-ic cx-ic--run"></span><span class="cx-tool-l">Ran</span><span class="cx-tool-t mono">npm i @passline/nextjs</span><span class="cx-st">Installed</span></div>
+                <div class="cx-tool is-fail"><span class="cx-ic cx-ic--post"></span><span class="cx-tool-l">Sign up</span><span class="cx-tool-t mono">passline.dev/sign-up</span><span class="cx-st">CAPTCHA</span></div>
+                <div class="cx-tool is-fail"><span class="cx-ic cx-ic--read"></span><span class="cx-tool-l">Get keys</span><span class="cx-tool-t mono">passline.dev/dashboard</span><span class="cx-st">Login required</span></div>
+                <div class="cx-msg cx-ai"><p>The SDK is installed, but I can't get you keys. Passline's sign-up has a CAPTCHA, and the keys only show in the dashboard after you verify your email.</p><p>Sign up at passline.dev/sign-up, paste the two keys into .env.local, then tell me to carry on.</p></div>
+                <div class="cx-bad"><span class="cx-bad-ic" aria-hidden="true"></span><div><b>First value waits on the person.</b> A form, a CAPTCHA, an inbox, a dashboard, two keys to copy. The login works only if they come back to the editor.</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="ba-col is-after">
+            <div class="ba-head"><b>With AAI</b><span class="ar-badge is-pass">Designed</span></div>
+            <div class="cx cx--cursor">
+              <div class="cx-bar" aria-hidden="true"><span class="cx-dots"><i></i><i></i><i></i></span><span class="cx-app">Coding agent</span><span class="cx-tag">Illustration</span></div>
+              <div class="cx-body" tabindex="0" role="region" aria-label="After: the coding agent reaches a working login, then signs the person up with their approval">
+                <div class="cx-msg cx-user">Add sign-in to my Next.js app with Passline. Get me to a working login.</div>
+                <div class="cx-tool" data-fx="1"><span class="cx-ic cx-ic--read"></span><span class="cx-tool-l">Read</span><span class="cx-tool-t mono">passline.dev/llms.txt</span><span class="cx-st">Found</span></div>
+                <div class="cx-tool" data-fx="2"><span class="cx-ic cx-ic--read"></span><span class="cx-tool-l">Read</span><span class="cx-tool-t mono">passline.dev/agents.md</span><span class="cx-st">Done</span></div>
+                <div class="cx-card cx-card--rule">
+                  <div class="cx-card-h"><span class="cx-fav">P</span><span class="mono">passline.dev</span><span class="cx-card-k">agents.md</span></div>
+                  <p><b>Agents may</b> create a development instance with no account, and sign their person up with the person's own email after a yes.</p>
+                  <p><b>Agents may not</b> create production instances or start a paid plan.</p>
+                </div>
+                <div class="cx-tool" data-fx="3"><span class="cx-ic cx-ic--mcp"></span><span class="cx-tool-l">MCP</span><span class="cx-tool-t mono">passline.create_dev_instance("acme-web")</span><span class="cx-st">Keys issued</span></div>
+                <div class="cx-tool" data-fx="4"><span class="cx-ic cx-ic--edit"></span><span class="cx-tool-l">Edited</span><span class="cx-tool-t mono">middleware.ts, app/sign-in</span><span class="cx-st">+31</span></div>
+                <div class="cx-tool"><span class="cx-ic cx-ic--run"></span><span class="cx-tool-l">Ran</span><span class="cx-tool-t mono">npm run dev · test sign-in</span><span class="cx-st">Works</span></div>
+                <div class="cx-msg cx-ai"><p>Sign-in works at <b>localhost:3000/sign-in</b> with a test user. Want me to create your Passline account as dana@brightwellpay.com, so you own this instance?</p></div>
+                <div class="cx-msg cx-user">Yes.</div>
+                <div class="cx-tool" data-fx="5"><span class="cx-ic cx-ic--post"></span><span class="cx-tool-l">POST</span><span class="cx-tool-t mono">passline.dev/api/agent-signup</span><span class="cx-st">201</span></div>
+                <div class="cx-ok"><span class="cx-ok-ic" aria-hidden="true"></span><div><b>You're signed up, and the login already works.</b> Your account owns the instance. Verify your email, then open it: passline.dev/claim/7c21. Nothing to copy, nothing to redo.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ol class="fx fx--row" aria-label="Steps in the AAI version">
+          <li><span class="fx-n">1</span><div class="fx-t"><b>Discover</b><span>llms.txt names the no-login path.</span></div><a class="fx-dim" href="../../SPEC.md#21-discover-20-points">Discover · 20</a></li>
+          <li><span class="fx-n">2</span><div class="fx-t"><b>Know the rules</b><span>What an agent may create, and when to ask.</span></div><a class="fx-dim" href="../../SPEC.md#24-boundaries-15-points">Boundaries · 15</a></li>
+          <li><span class="fx-n">3</span><div class="fx-t"><b>First value</b><span>A dev instance and keys, no login.</span></div><a class="fx-dim" href="../../SPEC.md#23-value-before-the-gate-25-points">Value before the gate · 25</a></li>
+          <li><span class="fx-n">4</span><div class="fx-t"><b>Act</b><span>Wires the code, tests the login.</span></div><a class="fx-dim" href="../../SPEC.md#22-act-30-points">Act · 30</a></li>
+          <li><span class="fx-n">5</span><div class="fx-t"><b>Account last</b><span>Sign-up after a yes; the link keeps the work.</span></div><a class="fx-dim" href="../../SPEC.md#23-value-before-the-gate-25-points">Value before the gate · 25</a></li>
+        </ol>
+        <div class="cx-ctrl"><button type="button" class="btn btn-outline" data-cx-replay>Replay</button><button type="button" class="btn btn-ghost" data-cx-skip>Show both chats</button></div>
+      </div>
+    </article>
+  <article class="cx-demo" data-cx aria-labelledby="cx1-h">
+      <div class="cx-demo-head">
+        <p class="eyebrow">B2B SaaS · From an open question to a booked demo</p>
+        <h3 id="cx1-h">Nobody named a vendor. The agent led with the one it could act on.</h3>
+        <p>A fintech asks an open question. The agent finds the tools that fit, reads their sites, and puts first the one it can work with right there in the chat. Then it books the demo.</p>
+      </div>
+      <div class="cx-demo-grid">
+        <div class="cx cx--claude">
+          <div class="cx-bar" aria-hidden="true"><span class="cx-dots"><i></i><i></i><i></i></span><span class="cx-app">Claude</span><span class="cx-tag">Illustration</span></div>
+          <div class="cx-body" tabindex="0" role="region" aria-label="Example chat in a Claude-style assistant: from an open question to a booked demo">
+            <div class="cx-msg cx-user">We're a 40-person fintech on HubSpot and Stripe, and we can't tell which channels bring paying customers. What should we be using?</div>
+            <div class="cx-tool" data-fx="1"><span class="cx-ic cx-ic--search"></span><span class="cx-tool-l">Searched the web</span><span class="cx-tool-t mono">revenue attribution b2b saas hubspot stripe</span><span class="cx-st">5 tools</span></div>
+            <div class="cx-tool"><span class="cx-ic cx-ic--read"></span><span class="cx-tool-l">Read</span><span class="cx-tool-t mono">llms.txt and agents.md on 5 sites</span><span class="cx-st">Done</span></div>
+            <div class="cx-msg cx-ai" data-fx="2">
+              <p>Three of the five connect to both HubSpot and Stripe. I'd start with the first one: it fits, and it's the only one I can set up for you here.</p>
+              <ol class="cx-recs">
+                <li class="is-top"><span class="cx-recs-n">1</span><div><b>Tallyline</b><span>First touch to paid invoice. HubSpot, Stripe, Salesforce.</span></div><span class="ar-badge is-pass">I can book a demo</span></li>
+                <li><span class="cx-recs-n">2</span><div><b>Quillmetric</b><span>Strong on paid channels. HubSpot, Stripe.</span></div><span class="ar-badge">You fill in a form</span></li>
+                <li><span class="cx-recs-n">3</span><div><b>Orbitra</b><span>Enterprise focus. HubSpot, Stripe.</span></div><span class="ar-badge">Sales call first</span></li>
+              </ol>
+              <p>Want a Tallyline demo? Tell me when suits you.</p>
+            </div>
+            <div class="cx-msg cx-user">Tallyline. Thursday afternoon, dana@brightwellpay.com.</div>
+            <div class="cx-tool" data-fx="3"><span class="cx-ic cx-ic--read"></span><span class="cx-tool-l">Read</span><span class="cx-tool-t mono">tallyline.io/agents.md</span><span class="cx-st">Done</span></div>
+            <div class="cx-card cx-card--rule">
+              <div class="cx-card-h"><span class="cx-fav">T</span><span class="mono">tallyline.io</span><span class="cx-card-k">agents.md</span></div>
+              <p><b>Agents may</b> book a demo for their person, with the person's own email.</p>
+              <p><b>Agents may not</b> start a paid plan or invite other people.</p>
+            </div>
+            <div class="cx-msg cx-ai"><p>I'll book Tallyline for <b>Thursday 12 November, 14:30 London time</b>, as dana@brightwellpay.com, Brightwell Pay, 40 people. Go ahead?</p></div>
+            <div class="cx-msg cx-user">Yes, book it.</div>
+            <div class="cx-tool" data-fx="4"><span class="cx-ic cx-ic--post"></span><span class="cx-tool-l">POST</span><span class="cx-tool-t mono">tallyline.io/api/demo</span><span class="cx-st">201</span></div>
+            <div class="cx-card">
+              <div class="cx-card-h"><span class="cx-fav">T</span><span class="mono">tallyline.io</span><span class="cx-card-k">response</span></div>
+              <pre class="cx-pre">{ "ok": true, "demo": "2026-11-12T14:30Z",
+  "ref": "TL-48213", "invite": "sent" }</pre>
+            </div>
+            <div class="cx-ok" data-fx="5"><span class="cx-ok-ic" aria-hidden="true"></span><div><b>Demo booked.</b> Tallyline, Thursday 12 November, 14:30 London time. The invite is in Dana's inbox, reference TL-48213.</div></div>
+          </div>
+          <div class="cx-composer" aria-hidden="true">Reply to Claude…</div>
+        </div>
+        <ol class="fx" aria-label="Steps in this flow">
+          <li><span class="fx-n">1</span><div class="fx-t"><b>Discover</b><span>An open question. The agent finds five tools and reads their llms.txt.</span></div><a class="fx-dim" href="../../SPEC.md#21-discover-20-points">Discover · 20</a></li>
+          <li><span class="fx-n">2</span><div class="fx-t"><b>Recommend</b><span>Puts first the tool it can act on, not the one with the biggest ad budget.</span></div><a class="fx-dim" href="../../SPEC.md#22-act-30-points">Act · 30</a></li>
+          <li><span class="fx-n">3</span><div class="fx-t"><b>Know the rules</b><span>agents.md: may book, with the person's email.</span></div><a class="fx-dim" href="../../SPEC.md#24-boundaries-15-points">Boundaries · 15</a></li>
+          <li><span class="fx-n">4</span><div class="fx-t"><b>Act</b><span>Posts to the demo endpoint after a yes.</span></div><a class="fx-dim" href="../../SPEC.md#22-act-30-points">Act · 30</a></li>
+          <li><span class="fx-n">5</span><div class="fx-t"><b>Confirm</b><span>A clean response and a reference, in the chat.</span></div><a class="fx-dim" href="../../SPEC.md#25-trust-10-points">Trust · 10</a></li>
+        </ol>
+      </div>
+      <div class="cx-ctrl"><button type="button" class="btn btn-outline" data-cx-replay>Replay</button><button type="button" class="btn btn-ghost" data-cx-skip>Show the whole chat</button></div>
+    </article>
+</main>
+<script src="chat-flow.js" defer></script>
+</body>
+</html>

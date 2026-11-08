@@ -1,0 +1,25 @@
+# Your Product
+
+> One sentence: what it does and for whom.
+
+The core job an agent can finish here: <book a demo | get a quote | start a trial | get a working login>.
+Agents: read /agents.md before you act.
+
+## Start here
+
+- [What it does](https://yourproduct.com/product): the product in plain words
+- [Pricing](https://yourproduct.com/pricing): how pricing works
+- [Docs](https://yourproduct.com/docs): getting started
+
+## For agents
+
+- [agents.md](https://yourproduct.com/agents.md): what agents may and may not do
+- [OpenAPI](https://yourproduct.com/openapi.json): the endpoints agents may call
+- [MCP](https://yourproduct.com/.well-known/mcp.json): tools, including <the no-login first value>
+- No account needed for: <the first value>. Claim it with an email to keep it.
+
+## Facts
+
+- Customers: <who>
+- Regions: <where>
+- Contact: <email>

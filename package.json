@@ -1,0 +1,14 @@
+{
+  "name": "aai-lint",
+  "version": "0.1.0",
+  "description": "Lint the public half of a site's AAI (Agent Application Interface): llms.txt, agents.md, agent-submittable forms, OpenAPI, MCP discovery, boundaries.",
+  "type": "module",
+  "bin": { "aai-lint": "cli/aai-lint.mjs" },
+  "files": ["cli", "templates", "components"],
+  "engines": { "node": ">=18" },
+  "keywords": ["aai", "agents", "ai-agents", "llms.txt", "agents.md", "mcp", "agent-readiness"],
+  "author": "Netanel Baruch <netanel@gtmagentcy.com> (https://gtmagentcy.com)",
+  "license": "MIT",
+  "homepage": "https://gtmagentcy.com/aai/",
+  "repository": { "type": "git", "url": "https://github.com/NetanelBaruch/aai.git" }
+}

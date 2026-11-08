@@ -1,0 +1,40 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Your Product: endpoints for agents",
+    "version": "0.1.0",
+    "description": "Rules: https://yourproduct.com/agents.md. Every write needs approvedByUser=true."
+  },
+  "servers": [{ "url": "https://yourproduct.com" }],
+  "paths": {
+    "/api/demo": {
+      "post": {
+        "operationId": "book_demo",
+        "summary": "Book a demo for your person",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": {
+          "type": "object", "required": ["email", "approvedByUser"],
+          "properties": {
+            "email": { "type": "string", "format": "email", "description": "The person's own email." },
+            "company": { "type": "string" }, "times": { "type": "string" },
+            "approvedByUser": { "const": true }
+          } } } } },
+        "responses": { "200": { "description": "Booked", "content": { "application/json": { "schema": {
+          "type": "object", "properties": { "ok": { "type": "boolean" }, "receipt": { "type": "string" }, "next": { "type": "string" } } } } } } }
+      }
+    },
+    "/api/agent-signup": {
+      "post": {
+        "operationId": "agent_signup",
+        "summary": "Create an account for your person, after a yes, and attach the work",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": {
+          "type": "object", "required": ["email", "approvedByUser"],
+          "properties": {
+            "email": { "type": "string", "format": "email" }, "name": { "type": "string" },
+            "instance": { "type": "string", "description": "The no-login instance to attach." },
+            "approvedByUser": { "const": true }, "agent": { "type": "string" }
+          } } } } },
+        "responses": { "201": { "description": "Created; verification sent to the person" } }
+      }
+    }
+  }
+}

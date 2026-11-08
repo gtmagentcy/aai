@@ -1,0 +1,15 @@
+# Runs the lint against the reference implementation (our own site) every Monday and on every PR
+# that touches the lint, so a broken check shows up before a contributor's site does.
+name: aai-lint
+on:
+  pull_request: { paths: ["cli/**"] }
+  schedule: [{ cron: "0 6 * * 1" }]
+  workflow_dispatch: {}
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node cli/aai-lint.mjs https://gtmagentcy.com

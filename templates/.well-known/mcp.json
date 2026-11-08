@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "yourproduct": {
+      "url": "https://yourproduct.com/mcp",
+      "transport": "streamable-http",
+      "auth": "none",
+      "description": "No-login tools: <create_dev_instance>, <get_quote>. Test mode only."
+    }
+  },
+  "serverInfo": { "name": "yourproduct", "title": "Your Product" },
+  "rules": "https://yourproduct.com/agents.md",
+  "openapi": "https://yourproduct.com/openapi.json"
+}
