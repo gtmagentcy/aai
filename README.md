@@ -180,4 +180,4 @@ Code (`cli/`, `components/`, `templates/`): [MIT](LICENSE). Text (`SPEC.md`, `do
 `examples/`): [CC BY 4.0](LICENSE-docs.md). Quote and adapt it; credit "AAI by GTMagentcy" with a
 link to this repository.
 
-AAI was defined by Netanel Baruch, who runs GTMagentcy and led go-to-market at Novu.
+AAI was defined by Netanel Baruch, who runs GTMagentcy.
