@@ -119,7 +119,7 @@ count as drop-offs. The record and how to run it: [examples/gtmagentcy.md](../..
 
 ## 4. Decisions for Netanel
 
-- [x] **The npm name:** `@gtmagentcy/aai` (the npm user `gtmagentcy` owns the scope). Published 2026-11-09: `npx @gtmagentcy/aai`.
+- [x] **The npm name:** `@gtmagentcy/aai` (the npm user `gtmagentcy` owns the scope). Ready to publish (0.4.0); npm needs Netanel's 2FA code: `npm publish --access public --otp=<code>`.
 - [x] **The repo is public**, under the gtmagentcy organization (Netanel, 2026-11-09).
 - [ ] **Dogfood on gtmagentcy.com (M2).** This changes the live site's functions and needs a
       reachable collector: a small always-on server, or wait for the hosted one.
