@@ -72,7 +72,6 @@ The terminal prints every check with a fix. Then a local app opens at `http://lo
 
 ![The agent's view](docs/img/app-overview.png)
 
-
 ![Build your AAI](docs/img/app-builder.png)
 
 | Flag | What it does |
