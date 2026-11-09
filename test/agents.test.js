@@ -79,3 +79,8 @@ test("the store never stores the same event id twice", async () => {
   assert.ok(s.add(e, "log"));
   assert.equal(s.add(e, "log"), null);
 });
+
+test("classified events have no undefined fields (Firestore rejects them)", () => {
+  const e = classify({ event: "tool_call", ua: "Claude-User/1.0", tool: "x" });
+  assert.ok(Object.values(e).every((v) => v !== undefined), JSON.stringify(e));
+});
