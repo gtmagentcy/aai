@@ -43,13 +43,24 @@ export async function openStore({ dir = path.join(os.homedir(), ".aai"), max = 5
     return e;
   }
 
+  /** An event that was already classified elsewhere (a hosted collector, Firestore): stored as is. */
+  function put(e) {
+    if (!e || !e.id || !e.ts || !e.site || seen.has(e.id)) return null;
+    seen.add(e.id);
+    events.push(e);
+    if (events.length > max) events.splice(0, events.length - max);
+    queue = queue.then(() => appendFile(fileOf(e.site), JSON.stringify(e) + "\n")).catch(() => {});
+    for (const fn of subs) { try { fn(e); } catch {} }
+    return e;
+  }
+
   function sites() {
     const m = {};
     for (const e of events) { if (e.event === "test") continue; const s = (m[e.site] ||= { site: e.site, events: 0, last: null }); s.events++; s.last = e.ts; }
     return Object.values(m).sort((a, b) => (a.last < b.last ? 1 : -1));
   }
 
-  return { dir, add, sites, events: () => events, funnel: (o) => funnel(events, o), journey: (k, o) => journeys(filter(events, o)).get(k) || null, subscribe: (fn) => (subs.add(fn), () => subs.delete(fn)), flush: () => queue };
+  return { dir, add, put, sites, events: () => events, funnel: (o) => funnel(events, o), journey: (k, o) => journeys(filter(events, o)).get(k) || null, subscribe: (fn) => (subs.add(fn), () => subs.delete(fn)), flush: () => queue };
 }
 
 function filter(events, { site, days = 30, now = Date.now(), test = false } = {}) {
