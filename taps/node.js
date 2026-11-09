@@ -1,7 +1,7 @@
 /**
  * Server tap for Node: Express, Connect, Fastify (via middie), plain http, Firebase Functions.
  *
- *   import { aai } from "aai/taps/node.js";
+ *   import { aai } from "@gtmagentcy/aai/taps/node.js";
  *   app.use(aai({ site: "yoursite", collector: process.env.AAI_COLLECTOR, secret: process.env.AAI_SECRET }));
  *
  *   // plain http or a Firebase function

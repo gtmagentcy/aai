@@ -26,13 +26,16 @@ export async function openStore({ dir = path.join(os.homedir(), ".aai"), max = 5
     }
   }
   events.sort((a, b) => (a.ts < b.ts ? -1 : 1));
+  const seen = new Set(events.map((e) => e.id));
   const subs = new Set();
   const fileOf = (site) => path.join(dir, String(site).replace(/[^\w.-]/g, "_") + ".jsonl");
 
   let queue = Promise.resolve();
   function add(raw, source) {
+    if (raw && raw.id && seen.has(String(raw.id).slice(0, 40))) return null; // already stored (a re-run pull or import)
     const e = classify({ ...raw, source: source || raw.source });
     if (!e) return null;
+    seen.add(e.id);
     events.push(e);
     if (events.length > max) events.splice(0, events.length - max);
     queue = queue.then(() => appendFile(fileOf(e.site), JSON.stringify(e) + "\n")).catch(() => {});

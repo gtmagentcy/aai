@@ -36,7 +36,7 @@ form by hand.
   pointing at `/api/mcp`. Both were the lint's two failing checks. On the local branch every lint check
   passes except HTTPS, which fails only because localhost is plain http. The score is re-run after deploy.
 
-Live site the same day, before that deploy: `npx github:gtmagentcy/aai gtmagentcy.com` → 12 of 14,
+Live site the same day, before that deploy: `npx @gtmagentcy/aai gtmagentcy.com` → 12 of 14,
   failing exactly those two checks.
 
 ## The agent funnel, measured locally (2026-11-09)

@@ -119,14 +119,12 @@ count as drop-offs. The record and how to run it: [examples/gtmagentcy.md](../..
 
 ## 4. Decisions for Netanel
 
-- [ ] **The npm name.** `aai` is taken by an unrelated package. Options: `@gtmagentcy/aai` (needs
-      an npm org) or `aai-kit`. Until then, installing from GitHub works (`npm i
-      github:gtmagentcy/aai`).
+- [x] **The npm name:** `@gtmagentcy/aai` (the npm user `gtmagentcy` owns the scope). Published 2026-11-09: `npx @gtmagentcy/aai`.
 - [x] **The repo is public**, under the gtmagentcy organization (Netanel, 2026-11-09).
 - [ ] **Dogfood on gtmagentcy.com (M2).** This changes the live site's functions and needs a
       reachable collector: a small always-on server, or wait for the hosted one.
 - [ ] **The hosted collector (M5).** Whether First Value becomes it, and when.
-- [ ] Licences, still open from 2026-11-08: MIT for code, CC BY 4.0 for the spec.
+- [x] Licences confirmed (Netanel, "do all", 2026-11-09): MIT for code, CC BY 4.0 for the spec and docs.
 
 ## 5. Limits, said plainly
 

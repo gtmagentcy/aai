@@ -1,6 +1,6 @@
 {
-  "name": "aai",
-  "version": "0.3.0",
+  "name": "@gtmagentcy/aai",
+  "version": "0.4.0",
   "description": "AAI (Agent Application Interface): lint a site, build its llms.txt, agents.md, OpenAPI and MCP card, and measure the agent funnel with server, action and browser taps and a local dashboard.",
   "type": "module",
   "bin": {
@@ -16,7 +16,9 @@
     "pixel",
     "templates",
     "components",
-    "examples/demo-site"
+    "examples/demo-site",
+    "SPEC.md",
+    "LICENSE-docs.md"
   ],
   "engines": {
     "node": ">=20"
@@ -54,5 +56,8 @@
     "start": "node cli/aai.mjs serve",
     "demo": "node cli/aai.mjs demo",
     "test": "node --test test/"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

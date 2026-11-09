@@ -2,7 +2,7 @@
  * Action tap for MCP servers and agent APIs. Counts the part of the funnel only you can see:
  * the agent acting, the person getting a first value, and the signup that follows.
  *
- *   import { mcpTap } from "aai/taps/mcp.js";
+ *   import { mcpTap } from "@gtmagentcy/aai/taps/mcp.js";
  *   const t = mcpTap({ site: "yoursite", collector, firstValue: ["get_quote", "create_sandbox"] });
  *
  *   // in your MCP HTTP handler, before you answer:

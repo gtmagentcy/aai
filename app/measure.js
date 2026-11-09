@@ -60,8 +60,8 @@
       '<header class="m-head"><div><p class="m-eyebrow">Measure</p><h1>The agent funnel</h1><p class="m-lede">How agents move through your site, from the first fetch to an account, measured on your own traffic. Nothing has arrived yet.</p></div></header>' +
       '<div class="m-empty">' +
         '<div class="m-empty-card"><b>Install the taps</b><p>A server tap, a browser tag and an action tap for your MCP server or API. Each one takes a few lines.</p><a class="btn btn-primary" href="#install">Install</a></div>' +
-        '<div class="m-empty-card"><b>Or see it with a demo</b><p>Starts a small demo site with all three taps and sends it about a hundred simulated agents.</p><pre class="m-code"><code>npx github:gtmagentcy/aai demo</code></pre></div>' +
-        '<div class="m-empty-card"><b>Or import a log</b><p>No code on the site: read an access log (nginx, Apache, most CDNs). IPs are hashed and dropped.</p><pre class="m-code"><code>npx github:gtmagentcy/aai import access.log --site you</code></pre></div>' +
+        '<div class="m-empty-card"><b>Or see it with a demo</b><p>Starts a small demo site with all three taps and sends it about a hundred simulated agents.</p><pre class="m-code"><code>npx @gtmagentcy/aai demo</code></pre></div>' +
+        '<div class="m-empty-card"><b>Or import a log</b><p>No code on the site: read an access log (nginx, Apache, most CDNs). IPs are hashed and dropped.</p><pre class="m-code"><code>npx @gtmagentcy/aai import access.log --site you</code></pre></div>' +
       "</div>";
     onLive(function () { route(); });
   }

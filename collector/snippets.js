@@ -4,7 +4,7 @@
  */
 export function snippets({ site = "yoursite", collector = "http://localhost:4319" } = {}) {
   const env = `AAI_COLLECTOR=${collector}\nAAI_SITE=${site}\nAAI_SECRET=<a long random string>`;
-  const install = "npm i github:gtmagentcy/aai";
+  const install = "npm i @gtmagentcy/aai";
   return {
     html: {
       title: "Browser tag", tap: "browser",
@@ -14,37 +14,37 @@ export function snippets({ site = "yoursite", collector = "http://localhost:4319
     express: {
       title: "Node / Express", tap: "server",
       note: "Sees assistants that fetch without JavaScript (ChatGPT-User, Claude-User, Perplexity-User) and every read of llms.txt, agents.md, openapi.json and the MCP card.",
-      files: [{ name: "shell", code: install }, { name: ".env", code: env }, { name: "server.js", code: `import { aai } from "aai/taps/node.js";\n\napp.use(aai({\n  site: process.env.AAI_SITE,\n  collector: process.env.AAI_COLLECTOR,\n  secret: process.env.AAI_SECRET,\n}));` }],
+      files: [{ name: "shell", code: install }, { name: ".env", code: env }, { name: "server.js", code: `import { aai } from "@gtmagentcy/aai/taps/node.js";\n\napp.use(aai({\n  site: process.env.AAI_SITE,\n  collector: process.env.AAI_COLLECTOR,\n  secret: process.env.AAI_SECRET,\n}));` }],
     },
     nextjs: {
       title: "Next.js", tap: "server",
       note: "Middleware runs before your pages, so the status is counted as 200. Exclude _next assets in the matcher.",
-      files: [{ name: "shell", code: install }, { name: ".env", code: env }, { name: "middleware.ts", code: `import { observe } from "aai/taps/fetch.js";\nimport type { NextRequest, NextFetchEvent } from "next/server";\n\nexport function middleware(req: NextRequest, ev: NextFetchEvent) {\n  ev.waitUntil(observe(req, {\n    site: process.env.AAI_SITE!,\n    collector: process.env.AAI_COLLECTOR!,\n    secret: process.env.AAI_SECRET!,\n  }));\n}\n\nexport const config = { matcher: ["/((?!_next/|favicon.ico).*)"] };` }],
+      files: [{ name: "shell", code: install }, { name: ".env", code: env }, { name: "middleware.ts", code: `import { observe } from "@gtmagentcy/aai/taps/fetch.js";\nimport type { NextRequest, NextFetchEvent } from "next/server";\n\nexport function middleware(req: NextRequest, ev: NextFetchEvent) {\n  ev.waitUntil(observe(req, {\n    site: process.env.AAI_SITE!,\n    collector: process.env.AAI_COLLECTOR!,\n    secret: process.env.AAI_SECRET!,\n  }));\n}\n\nexport const config = { matcher: ["/((?!_next/|favicon.ico).*)"] };` }],
     },
     vercel: {
       title: "Vercel (any framework)", tap: "server",
       note: "Routing Middleware runs before the cache on every request, for any framework on Vercel.",
-      files: [{ name: "shell", code: install }, { name: "middleware.js", code: `import { observe } from "aai/taps/fetch.js";\nimport { waitUntil } from "@vercel/functions";\n\nexport default function middleware(req) {\n  waitUntil(observe(req, { site: "${site}", collector: process.env.AAI_COLLECTOR, secret: process.env.AAI_SECRET }));\n}` }],
+      files: [{ name: "shell", code: install }, { name: "middleware.js", code: `import { observe } from "@gtmagentcy/aai/taps/fetch.js";\nimport { waitUntil } from "@vercel/functions";\n\nexport default function middleware(req) {\n  waitUntil(observe(req, { site: "${site}", collector: process.env.AAI_COLLECTOR, secret: process.env.AAI_SECRET }));\n}` }],
     },
     cloudflare: {
       title: "Cloudflare Worker", tap: "server",
       note: "Wrap the Worker's fetch handler; reporting runs in waitUntil and never slows the response.",
-      files: [{ name: "shell", code: install }, { name: "worker.js", code: `import { withAai } from "aai/taps/fetch.js";\n\nexport default {\n  fetch: withAai((req, env) => fetch(req), {\n    site: "${site}",\n    collector: "${collector}",\n  }),\n};` }],
+      files: [{ name: "shell", code: install }, { name: "worker.js", code: `import { withAai } from "@gtmagentcy/aai/taps/fetch.js";\n\nexport default {\n  fetch: withAai((req, env) => fetch(req), {\n    site: "${site}",\n    collector: "${collector}",\n  }),\n};` }],
     },
     firebase: {
       title: "Firebase Functions", tap: "server",
       note: "Static files on Firebase Hosting never reach a function; rewrite llms.txt and agents.md to a function, or import the Hosting logs with `aai import`.",
-      files: [{ name: "shell", code: install }, { name: "index.js", code: `import { onRequest } from "firebase-functions/v2/https";\nimport { aai } from "aai/taps/node.js";\n\nexport const api = onRequest(aai.wrap(handler, {\n  site: "${site}",\n  collector: process.env.AAI_COLLECTOR,\n  secret: process.env.AAI_SECRET,\n}));` }],
+      files: [{ name: "shell", code: install }, { name: "index.js", code: `import { onRequest } from "firebase-functions/v2/https";\nimport { aai } from "@gtmagentcy/aai/taps/node.js";\n\nexport const api = onRequest(aai.wrap(handler, {\n  site: "${site}",\n  collector: process.env.AAI_COLLECTOR,\n  secret: process.env.AAI_SECRET,\n}));` }],
     },
     mcp: {
       title: "MCP server or agent API", tap: "action",
       note: "Counts the steps only you can see: tool calls, the first value, and the signup that follows (joined by the claim id). Tool arguments are never sent.",
-      files: [{ name: "shell", code: install }, { name: "mcp.js", code: `import { mcpTap } from "aai/taps/mcp.js";\n\nconst t = mcpTap({\n  site: "${site}", collector: process.env.AAI_COLLECTOR, secret: process.env.AAI_SECRET,\n  firstValue: ["get_quote"],          // tools that give the person a result with no account\n});\n\n// in the MCP HTTP handler, before answering\nconst { cid } = await t.observe(body, { mcpSession: req.headers["mcp-session-id"], ua: req.headers["user-agent"], ip });\n\n// in the first-value result, hand the person a claim link\nconst link = t.claimUrl("https://${site}/signup", cid);\n\n// in the signup route\nif (body.aai_cid) t.track("signup_from_agent", { cid: body.aai_cid });` }],
+      files: [{ name: "shell", code: install }, { name: "mcp.js", code: `import { mcpTap } from "@gtmagentcy/aai/taps/mcp.js";\n\nconst t = mcpTap({\n  site: "${site}", collector: process.env.AAI_COLLECTOR, secret: process.env.AAI_SECRET,\n  firstValue: ["get_quote"],          // tools that give the person a result with no account\n});\n\n// in the MCP HTTP handler, before answering\nconst { cid } = await t.observe(body, { mcpSession: req.headers["mcp-session-id"], ua: req.headers["user-agent"], ip });\n\n// in the first-value result, hand the person a claim link\nconst link = t.claimUrl("https://${site}/signup", cid);\n\n// in the signup route\nif (body.aai_cid) t.track("signup_from_agent", { cid: body.aai_cid });` }],
     },
     logs: {
       title: "Access logs", tap: "server",
       note: "No code on the site: import a Combined Log Format file (nginx, Apache, most CDNs). IPs are hashed and dropped.",
-      files: [{ name: "shell", code: `npx github:gtmagentcy/aai import access.log --site ${site}` }],
+      files: [{ name: "shell", code: `npx @gtmagentcy/aai import access.log --site ${site}` }],
     },
   };
 }

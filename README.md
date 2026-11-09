@@ -56,7 +56,7 @@ The full definition and scoring are in [SPEC.md](SPEC.md).
 **1. Check your site and open the app** (public pages only, no dependencies, Node 20+):
 
 ```sh
-npx github:gtmagentcy/aai example.com
+npx @gtmagentcy/aai example.com
 ```
 
 The terminal prints every check with a fix. Then a local app opens at `http://localhost:4319`:
@@ -101,8 +101,8 @@ funnel, with the same stations as the score: Reach → Understand → Rules → 
 Account → Activated.
 
 ```sh
-npx github:gtmagentcy/aai demo     # a demo site with all three taps and ~100 simulated agents
-npx github:gtmagentcy/aai serve    # the dashboard and collector on your machine
+npx @gtmagentcy/aai demo     # a demo site with all three taps and ~100 simulated agents
+npx @gtmagentcy/aai serve    # the dashboard and collector on your machine
 ```
 
 - **Agent funnel:** journeys per step and per agent, where they stop and the fix for each

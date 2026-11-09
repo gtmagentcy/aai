@@ -3,11 +3,11 @@
  * Functions, Cloudflare Workers, Deno, Bun, Hono.
  *
  *   // Cloudflare Worker / any (request) => Response handler
- *   import { withAai } from "aai/taps/fetch.js";
+ *   import { withAai } from "@gtmagentcy/aai/taps/fetch.js";
  *   export default { fetch: withAai(handler, { site: "yoursite", collector: "https://..." }) };
  *
  *   // Next.js middleware.ts (status is not known in middleware; counted as 200)
- *   import { observe } from "aai/taps/fetch.js";
+ *   import { observe } from "@gtmagentcy/aai/taps/fetch.js";
  *   export function middleware(req, ev) { ev.waitUntil(observe(req, { site: "yoursite" })); }
  */
 import { createTap } from "./core.js";

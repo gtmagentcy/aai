@@ -57,3 +57,25 @@ test("access logs: CLF dates, agent lines only", () => {
   assert.equal(out.length, 2);
   assert.ok(out.every((e) => !("ip" in e) && e.session.length === 16));
 });
+
+test("Cloud Logging entries: agents only, insertId as the event id", async () => {
+  const { cloudLoggingEvents } = await import("../lib/logs.js");
+  const entries = [
+    { insertId: "a1", timestamp: "2026-11-09T10:00:00Z", httpRequest: { requestUrl: "https://gtmagentcy.com/llms.txt", requestMethod: "GET", status: 200, userAgent: "Mozilla/5.0 Claude-User/1.0", remoteIp: "1.2.3.4" } },
+    { insertId: "a2", timestamp: "2026-11-09T10:00:01Z", httpRequest: { requestUrl: "https://gtmagentcy.com/pricing", requestMethod: "GET", status: 200, userAgent: "Mozilla/5.0 Safari", remoteIp: "5.6.7.8" } },
+    { insertId: "a3", timestamp: "2026-11-09T10:00:02Z", httpRequest: { requestUrl: "https://gtmagentcy.com/?utm_source=chatgpt.com", status: 200, userAgent: "Mozilla/5.0 Safari", remoteIp: "9.9.9.9" } },
+  ];
+  const out = [...cloudLoggingEvents(entries, { site: "t" })];
+  assert.deepEqual(out.map((e) => e.id), ["gcl-a1", "gcl-a3"]);
+  assert.ok(out.every((e) => !("remoteIp" in e) && !("ip" in e)));
+});
+
+test("the store never stores the same event id twice", async () => {
+  const { mkdtemp } = await import("node:fs/promises");
+  const os = await import("node:os"), path = await import("node:path");
+  const { openStore } = await import("../collector/store.js");
+  const s = await openStore({ dir: await mkdtemp(path.join(os.tmpdir(), "aai-dd-")) });
+  const e = { id: "x1", site: "t", event: "request", ua: "GPTBot/1.2", path: "/" };
+  assert.ok(s.add(e, "log"));
+  assert.equal(s.add(e, "log"), null);
+});

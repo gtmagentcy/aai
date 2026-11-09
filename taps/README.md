@@ -16,20 +16,20 @@ Vercel, Next.js, Cloudflare Workers, Deno and Bun.
 ## Install
 
 ```sh
-npm i github:gtmagentcy/aai
+npm i @gtmagentcy/aai
 ```
 
 ```js
 // Express / Connect / Firebase Functions
-import { aai } from "aai/taps/node.js";
+import { aai } from "@gtmagentcy/aai/taps/node.js";
 app.use(aai({ site: "yoursite", collector: process.env.AAI_COLLECTOR, secret: process.env.AAI_SECRET }));
 
 // Cloudflare Worker, Vercel, any (request) => Response
-import { withAai, observe } from "aai/taps/fetch.js";
+import { withAai, observe } from "@gtmagentcy/aai/taps/fetch.js";
 export default { fetch: withAai(handler, { site: "yoursite", collector }) };
 
 // MCP server: count tool calls, mark first value, hand a claim link
-import { mcpTap } from "aai/taps/mcp.js";
+import { mcpTap } from "@gtmagentcy/aai/taps/mcp.js";
 const t = mcpTap({ site: "yoursite", collector, firstValue: ["get_quote"] });
 const { cid } = await t.observe(body, { mcpSession, ua, ip });
 t.claimUrl("https://you.com/signup", cid);   // in the tool result
