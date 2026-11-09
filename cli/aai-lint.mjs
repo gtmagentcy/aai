@@ -50,4 +50,4 @@ if (flags.has("--strict")) process.exit(result.passed < result.total ? 1 : 0);
 if (flags.has("--no-open") || process.env.CI) { console.log(""); process.exit(0); }
 
 const { serve } = await import("./serve.mjs");
-await serve({ first: result, port: +(opt("--port") || 4319), dir: opt("--dir"), open: !flags.has("--no-browser") });
+await serve({ first: result, port: +(opt("--port") || 4319), dir: opt("--dir"), data: opt("--data"), open: !flags.has("--no-browser") });

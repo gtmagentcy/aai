@@ -30,7 +30,7 @@
   /* ------------------------------------------------------------------ data */
   function api(path, body) {
     return fetch(path, body ? { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) } : {})
-      .then(function (r) { return r.json().then(function (j) { j.__status = r.status; return j; }); });
+      .then(function (r) { return r.json().then(function (j) { if (j && typeof j === "object") j.__status = r.status; return j; }); });
   }
   function check(id) { return report.checks.find(function (c) { return c.id === id; }) || { pass: false }; }
   function origin() { try { return new URL(report.url).origin; } catch (_) { return "https://" + report.meta.host; } }
@@ -223,6 +223,11 @@
     return { cs: cs, pass: cs.filter(function (c) { return c.pass; }).length, got: got };
   }
   function renderSide(route) {
+    if (!report) {
+      $("#side-site").innerHTML = '<div class="site-id"><span class="site-fav" style="background:#fff;border:1px solid var(--mist)"><img src="/app/img/mark.svg" alt=""></span><div><b>No site checked</b><span>Enter one above to score it</span></div></div>';
+      $("#side-nav").innerHTML = measureNav(route);
+      return;
+    }
     var m = report.meta, e = report.estimate;
     $("#side-site").innerHTML = '<div class="site-id"><span class="site-fav">' + esc((m.siteName || m.host)[0].toUpperCase()) +
       (m.icon ? '<img src="' + esc(m.icon) + '" alt="" onerror="this.remove()">' : "") + '</span><div><b>' + esc(m.siteName || m.host) + "</b><span>" + esc(m.host) + "</span></div></div>" +
@@ -233,7 +238,12 @@
       nav += link("dim/" + d.slug, String(i + 1), d.id, s.pass + "/" + s.cs.length, route === "dim/" + d.slug, cls);
     });
     nav += "<h2>Build</h2>" + link("build", "✎", "Build your AAI", "", route === "build", "is-build");
-    $("#side-nav").innerHTML = nav;
+    $("#side-nav").innerHTML = nav + measureNav(route);
+  }
+  function measureNav(route) {
+    var M = window.AAIMeasure;
+    return "<h2>Measure</h2>" + link("funnel", "↘", "Agent funnel", M ? M.badge() : "", route === "funnel" || route === "journey", "is-build") +
+      link("install", "⌁", "Install the taps", "", route === "install", "is-build") + link("ask", "?", "Ask your agent", "", route === "ask", "is-build");
   }
   function link(r, n, label, count, cur, cls) {
     return '<a href="#' + r + '"' + (cur ? ' aria-current="page"' : "") + '><span class="nav-n ' + (cls || "") + '">' + n + "</span><span>" + esc(label) + '</span><span class="nav-c">' + esc(count) + "</span></a>";
@@ -348,7 +358,16 @@
 
   /* ------------------------------------------------------------------ router */
   function route() {
-    var h = (location.hash || "#overview").slice(1), parts = h.split("/");
+    var h = (location.hash || (report ? "#overview" : "#funnel")).slice(1), parts = h.split("/");
+    var M = window.AAIMeasure;
+    if (M && M.views[parts[0]]) {
+      renderSide(parts[0]);
+      M.views[parts[0]](view, parts.slice(1).map(decodeURIComponent), { report: report, config: config });
+      window.scrollTo(0, 0); view.focus({ preventScroll: true });
+      document.title = "AAI · " + M.title(parts[0]);
+      return;
+    }
+    if (!report) { location.hash = "#funnel"; return; }
     renderSide(parts[0] === "dim" ? h : parts[0]);
     if (parts[0] === "dim") vDim(parts[1]);
     else if (parts[0] === "build") vBuild(parts[1]);
@@ -359,11 +378,13 @@
   window.addEventListener("hashchange", route);
   $("#top-form").addEventListener("submit", function (e) {
     e.preventDefault();
-    var u = $("#top-url").value.trim() || report.url;
+    var u = $("#top-url").value.trim() || (report && report.url);
+    if (!u) { status.textContent = "Enter a site to check."; return; }
     status.textContent = "Reading " + u + " the way an agent does…";
     api("/api/lint", { url: u }).then(function (r) {
       if (r.error) { status.textContent = r.error; return; }
-      report = r; loadForm(); status.textContent = "Checked " + r.meta.host + " · " + r.passed + "/" + r.total + " pass"; $("#top-url").value = r.meta.host; route();
+      report = r; loadForm(); status.textContent = "Checked " + r.meta.host + " · " + r.passed + "/" + r.total + " pass"; $("#top-url").value = r.meta.host;
+      if (location.hash === "#overview") route(); else location.hash = "#overview";
     }).catch(function () { status.textContent = "The local app stopped. Run the CLI again."; });
   });
 
@@ -373,6 +394,9 @@
   function slugOf(dim) { var d = DIMS.find(function (x) { return x.id === dim; }); return d ? d.slug : "discover"; }
 
   Promise.all([api("/api/report"), api("/api/config")]).then(function (x) {
-    report = x[0]; config = x[1]; $("#top-url").value = report.meta.host; loadForm(); route();
+    report = x[0]; config = x[1];
+    if (report) { $("#top-url").value = report.meta.host; loadForm(); }
+    window.AAIApp = { rerenderSide: function () { var h = (location.hash || "#funnel").slice(1).split("/")[0]; renderSide(h === "dim" ? location.hash.slice(1) : h); } };
+    route();
   });
 })();

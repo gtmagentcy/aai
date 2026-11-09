@@ -53,7 +53,7 @@ The full definition and scoring are in [SPEC.md](SPEC.md).
 
 ## Quick start
 
-**1. Check your site and open the app** (public pages only, no dependencies, Node 18+):
+**1. Check your site and open the app** (public pages only, no dependencies, Node 20+):
 
 ```sh
 npx github:NetanelBaruch/aai example.com
@@ -95,7 +95,32 @@ The app binds to 127.0.0.1 only. Nothing you type leaves your computer.
 - [First value over MCP](docs/patterns/mcp-first-value.md)
 - [Claim links](docs/patterns/claim-link.md)
 
-**4. Show it.** [`components/chat-flow`](components/chat-flow) is the animated chat mockup from
+**4. Measure the agent funnel.** Most assistants fetch your pages without running JavaScript,
+so a pixel alone misses them. AAI measures with three taps (server, action, browser) that feed one
+funnel, with the same stations as the score: Reach → Understand → Rules → Act → First value →
+Account → Activated.
+
+```sh
+npx github:NetanelBaruch/aai demo     # a demo site with all three taps and ~100 simulated agents
+npx github:NetanelBaruch/aai serve    # the dashboard and collector on your machine
+```
+
+- **Agent funnel:** journeys per step and per agent, where they stop and the fix for each
+  (copyable as a prompt for your coding agent), time to first value, signups from the agent path,
+  and a live feed.
+- **Journey replay:** one agent's path through your site, drawn as a chat.
+- **Install the taps:** code for Express, Next.js, Vercel, Cloudflare, Firebase, MCP servers and
+  plain HTML, filled in for your site, with a test button. Or import an access log.
+- **Ask your agent:** the dashboard is also an MCP server, so Claude Code or Cursor can read the
+  funnel and make the fix: `claude mcp add --transport http aai-local http://localhost:4319/mcp`.
+
+Events stay on your machine (`~/.aai`). No IPs, cookies, form values or tool arguments are kept.
+How it works: [taps/README.md](taps/README.md) and [SPEC.md §6](SPEC.md). The research behind
+the agent registry: [docs/research/2026-11-09-agent-funnel-tracking.md](docs/research/2026-11-09-agent-funnel-tracking.md).
+
+![The agent funnel](docs/img/app-funnel.png)
+
+**5. Show it.** [`components/chat-flow`](components/chat-flow) is the animated chat mockup from
 the AAI page: plain HTML, one CSS file, one script, reduced-motion safe. Write your own flow and
 put it in your docs.
 
@@ -113,8 +138,12 @@ docs/implementing.md     the build order, by points recovered
 docs/patterns/           one page per pattern, with request and response shapes
 docs/industries.md       what AAI could look like for airlines, games, hotels, clinics, banks, cities
 templates/               llms.txt, agents.md, .well-known/mcp.json, openapi.json
-cli/                     the lint (lint.mjs) and the local app server (serve.mjs)
-app/                     the local app: the agent's view and the builder
+cli/                     aai (lint, serve, import, demo), the lint (lint.mjs), the app server (serve.mjs)
+app/                     the dashboard: the agent's view, the builder, and Measure (measure.js)
+lib/agents.js            the agent registry and the event model
+collector/               the event store, the funnel maths, the dashboard's MCP server
+taps/                    server, action and fetch taps; pixel/aai.js is the browser tag
+test/                    node --test: registry, funnel, end to end
 components/chat-flow/    the animated chat mockup
 examples/                implementations, ours first
 ```

@@ -1,8 +1,8 @@
-# AAI specification, v0.1 (draft)
+# AAI specification, v0.2 (draft)
 
 AAI, the Agent Application Interface, is the interface a product exposes to AI agents. This
 document defines the term, its five dimensions, the artefacts that make each one up, how an AAI is
-scored, and what a conforming implementation does. It is a working draft dated 8 November 2026.
+scored, and what a conforming implementation does. It is a working draft dated 8 November 2026; v0.2 (9 November 2026) adds §6, measuring the agent funnel.
 The key words MUST, SHOULD and MAY are used as in RFC 2119.
 
 ## 1. Definition
@@ -122,13 +122,71 @@ Every AAI flow MUST keep these:
    explicitly delegated them.
 4. The product tells the agent the result in a form it can relay: a receipt, a reference, a link.
 
-## 6. Versioning
+## 6. Measuring the agent funnel (AAI Events, v0.1)
+
+The score says what an AAI should let an agent do. Events say what agents actually did. A site
+that implements AAI SHOULD measure its agent funnel with the same stations the score uses, so a
+fix can be checked against real traffic.
+
+### 6.1 Steps
+
+| Step | An agent journey reaches it when | Dimension |
+|---|---|---|
+| `reach` | Any agent fetches anything (crawlers and AI search only ever count here) | Discover |
+| `understand` | An agent fetching for a person reads a page, `llms.txt`, OpenAPI or the MCP card | Discover |
+| `rules` | It reads `agents.md` | Boundaries |
+| `act` | It submits a form, calls an API, connects to MCP or calls a tool | Act |
+| `first_value` | The person gets a result with no account | Value before the gate |
+| `account` | The person opens a claim link or signs up from the agent's work | Value before the gate |
+| `activated` | That account does the thing that counts | Value before the gate |
+
+A journey counts at a step if it reached that step or any later one (agents skip steps).
+
+### 6.2 Where events come from
+
+Most assistants fetch HTML without running JavaScript, so a browser script alone undercounts.
+Three taps feed one stream:
+
+1. **Server tap**: requests whose User-Agent names an agent, requests with a `Signature-Agent`
+   header (Web Bot Auth), and any request to an agent surface.
+2. **Action tap**: MCP sessions, tool calls, API calls, first value, signup, activation.
+3. **Browser tag**: people arriving from an assistant's answer (referrer or `utm_source`), visits
+   by an agent link (`?via=agent`), agents driving a browser (heuristic), prompt copies, forms.
+
+### 6.3 Event shape
+
+```json
+{ "site": "yoursite", "event": "tool_call", "ts": "2026-11-09T10:00:00Z",
+  "ua": "…", "path": "/mcp", "method": "POST", "status": 200,
+  "session": "9f2c…", "cid": "c_k3j…", "tool": "get_quote", "source": "action" }
+```
+
+Events: `request`, `agent_visit`, `prompt_copy`, `form_start`, `form_submit`, `api_call`,
+`mcp_session`, `tool_call`, `first_value`, `claim_click`, `signup_from_agent`, `activated`.
+The collector classifies each into `agent`, `kind` (user, browser, coding, search, crawler,
+script, referral) and `step`.
+
+### 6.4 Joining a journey
+
+- `session`: a hash of a site secret, the date, the client IP and the User-Agent, computed on the
+  site's server. It changes daily and the IP never leaves the server.
+- `cid` (claim id): issued by the action tap when an agent acts, carried in the claim link
+  (`?aai_cid=`) and sent with the signup. Events sharing a session or a cid are one journey.
+  This keeps attribution working when an assistant drops the referrer.
+
+### 6.5 Privacy (MUST)
+
+- Do not store IP addresses, form values, tool arguments or tool results.
+- Do not set cookies; the browser tag MAY use sessionStorage for one visit.
+- Send nothing for a human visit with no agent signal.
+
+## 7. Versioning
 
 This spec uses `MAJOR.MINOR`. A change to the weights or to a MUST is a minor version while the
 spec is below 1.0. Proposals go through an issue labelled `spec` and a pull request against this
 file; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## 7. Evidence
+## 8. Evidence
 
 AgentReady benchmark of 40 well-known SaaS sites, 7 September 2026: 83% had an llms.txt, 3% had a
 form an agent could submit, 15% had an agent policy file, 5% exposed an MCP endpoint; median

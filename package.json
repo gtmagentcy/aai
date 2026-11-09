@@ -1,28 +1,38 @@
 {
-  "name": "aai-lint",
-  "version": "0.2.0",
-  "description": "Check a site's AAI (Agent Application Interface), see the agent's journey on it, and build llms.txt, agents.md, OpenAPI and the MCP card in a local app.",
+  "name": "aai",
+  "version": "0.3.0",
+  "description": "AAI (Agent Application Interface): lint a site, build its llms.txt, agents.md, OpenAPI and MCP card, and measure the agent funnel with server, action and browser taps and a local dashboard.",
   "type": "module",
   "bin": {
+    "aai": "cli/aai.mjs",
     "aai-lint": "cli/aai-lint.mjs"
   },
   "files": [
     "cli",
     "app",
+    "lib",
+    "collector",
+    "taps",
+    "pixel",
     "templates",
-    "components"
+    "components",
+    "examples/demo-site"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "keywords": [
     "aai",
+    "agent-analytics",
+    "agent-funnel",
+    "agent-readiness",
     "agents",
-    "ai-agents",
-    "llms.txt",
     "agents.md",
+    "ai-agents",
+    "ai-agents-tracking",
+    "llms.txt",
     "mcp",
-    "agent-readiness"
+    "web-bot-auth"
   ],
   "author": "Netanel Baruch <netanel@gtmagentcy.com> (https://gtmagentcy.com)",
   "license": "MIT",
@@ -30,5 +40,19 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/NetanelBaruch/aai.git"
+  },
+  "exports": {
+    "./taps/node.js": "./taps/node.js",
+    "./taps/fetch.js": "./taps/fetch.js",
+    "./taps/mcp.js": "./taps/mcp.js",
+    "./taps/core.js": "./taps/core.js",
+    "./lib/agents.js": "./lib/agents.js",
+    "./collector/store.js": "./collector/store.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "start": "node cli/aai.mjs serve",
+    "demo": "node cli/aai.mjs demo",
+    "test": "node --test test/"
   }
 }

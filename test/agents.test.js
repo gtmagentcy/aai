@@ -1,0 +1,59 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { identify, classify, stepOf, AGENT_UA, AGENTS, isAgentSurface } from "../lib/agents.js";
+import { logEvents, parseClfDate } from "../lib/logs.js";
+
+test("identifies agents by user-agent, most specific first", () => {
+  assert.equal(identify({ ua: "Mozilla/5.0 (compatible; ChatGPT-User/1.0; +https://openai.com/bot)" }).agent, "chatgpt-user");
+  assert.equal(identify({ ua: "Claude-User (claude-code/2.1.90)" }).agent, "claude-code");
+  assert.equal(identify({ ua: "Mozilla/5.0 Claude-User/1.0" }).agent, "claude-user");
+  assert.equal(identify({ ua: "Mozilla/5.0 (compatible; GPTBot/1.2)" }).kind, "crawler");
+});
+
+test("a signed agent beats its user-agent", () => {
+  assert.deepEqual(identify({ ua: "Mozilla/5.0 Chrome/140", signatureAgent: '"https://chatgpt.com"' }), { agent: "chatgpt-agent", kind: "browser", via: "signature" });
+});
+
+test("referrals: full URLs and utm_source, no false positives", () => {
+  assert.equal(identify({ referrer: "https://chatgpt.com/" }).agent, "chatgpt-user");
+  assert.equal(identify({ referrer: "https://www.perplexity.ai/search/x" }).kind, "referral");
+  assert.equal(identify({ utm: "chatgpt.com" }).via, "utm");
+  assert.equal(identify({ referrer: "https://notchatgpt.com/" }).agent, null);
+  assert.equal(identify({ referrer: "https://www.google.com/" }).agent, null);
+});
+
+test("every token is in the fast regex", () => {
+  for (const a of AGENTS) for (const t of a.tokens) assert.ok(AGENT_UA.test(`x ${t} y`), t);
+  assert.ok(!AGENT_UA.test("Mozilla/5.0 (Macintosh) Safari/605.1.15"));
+});
+
+test("steps: crawlers only reach; agent surfaces map to their step", () => {
+  assert.equal(stepOf({ event: "request", path: "/llms.txt", kind: "crawler" }), "reach");
+  assert.equal(stepOf({ event: "request", path: "/llms.txt", kind: "user" }), "understand");
+  assert.equal(stepOf({ event: "request", path: "/agents.md", kind: "user" }), "rules");
+  assert.equal(stepOf({ event: "request", path: "/mcp", method: "POST", kind: "user" }), "act");
+  assert.equal(stepOf({ event: "request", path: "/x", status: 404, kind: "user" }), null);
+  assert.equal(stepOf({ event: "first_value" }), "first_value");
+  assert.equal(stepOf({ event: "signup_from_agent" }), "account");
+});
+
+test("classify keeps no human page views and no personal fields", () => {
+  assert.equal(classify({ event: "request", ua: "Mozilla/5.0 Safari", path: "/pricing" }), null);
+  assert.equal(classify({ event: "agent_visit", ua: "Mozilla/5.0 Safari", referrer: "https://google.com/" }), null);
+  const e = classify({ event: "request", ua: "curl/8", path: "/llms.txt", ip: "1.2.3.4", email: "a@b.c" });
+  assert.equal(e.agent, "script");
+  assert.ok(!("ip" in e) && !("email" in e) && !("ua" in e));
+  assert.ok(isAgentSurface("/.well-known/mcp.json"));
+});
+
+test("access logs: CLF dates, agent lines only", () => {
+  assert.equal(parseClfDate("10/Nov/2026:13:55:36 +0200"), "2026-11-10T11:55:36.000Z");
+  const log = [
+    '1.1.1.1 - - [10/Nov/2026:13:55:36 +0000] "GET /llms.txt HTTP/1.1" 200 512 "-" "Mozilla/5.0 Claude-User/1.0"',
+    '2.2.2.2 - - [10/Nov/2026:13:55:37 +0000] "GET /pricing HTTP/1.1" 200 512 "https://www.google.com/" "Mozilla/5.0 Safari"',
+    '3.3.3.3 - - [10/Nov/2026:13:55:38 +0000] "GET /?utm_source=chatgpt.com HTTP/1.1" 200 512 "-" "Mozilla/5.0 Safari"',
+  ].join("\n");
+  const out = [...logEvents(log, { site: "t" })];
+  assert.equal(out.length, 2);
+  assert.ok(out.every((e) => !("ip" in e) && e.session.length === 16));
+});
