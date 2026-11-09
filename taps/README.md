@@ -16,7 +16,7 @@ Vercel, Next.js, Cloudflare Workers, Deno and Bun.
 ## Install
 
 ```sh
-npm i github:NetanelBaruch/aai
+npm i github:gtmagentcy/aai
 ```
 
 ```js

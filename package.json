@@ -39,7 +39,7 @@
   "homepage": "https://gtmagentcy.com/aai/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NetanelBaruch/aai.git"
+    "url": "https://github.com/gtmagentcy/aai.git"
   },
   "exports": {
     "./taps/node.js": "./taps/node.js",

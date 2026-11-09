@@ -42,7 +42,7 @@ export async function serve({ first = null, port = 4319, dir, data, host = "127.
   const outDir = dir ? path.resolve(dir) : null;
   const store = await openStore(data ? { dir: path.resolve(data) } : {});
   let origin = `http://localhost:${port}`;
-  const mcp = mcpHandler({ store, get origin() { return origin; } });
+  const mcp = mcpHandler({ store, get origin() { return origin; }, report: () => current });
   const hits = new Map(); // per-IP rate limit for /e, in memory only
 
   const server = http.createServer(async (req, res) => {

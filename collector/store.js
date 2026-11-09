@@ -120,12 +120,16 @@ export function funnel(all, opts = {}) {
   }
   const agents = Object.values(byAgent).sort((a, b) => b.journeys - a.journeys);
 
-  // Where journeys stop: the step after a journey's furthest, for journeys that acted or tried to.
+  // Where journeys stop: the step after a journey's furthest. Only journeys made for a person count:
+  // crawlers and AI search only ever reach Reach by design, so they never "drop off".
+  const forPerson = js.filter((j) => j.kind !== "crawler" && j.kind !== "search");
+  const at = (s) => forPerson.filter((j) => reached(j, s)).length;
   const dropOffs = [];
   for (let i = 1; i < STEPS.length; i++) {
-    const before = steps[i - 1].journeys, after = steps[i].journeys;
+    const before = at(STEP_IDS[i - 1]), after = at(STEP_IDS[i]);
     if (!before || before === after) continue;
-    const lost = js.filter((j) => j.furthest === STEP_IDS[i - 1]);
+    if (STEP_IDS[i] === "activated" && !after) continue; // this site doesn't send activation yet: not a drop-off
+    const lost = forPerson.filter((j) => j.furthest === STEP_IDS[i - 1]);
     const who = {};
     for (const j of lost) who[j.agent] = (who[j.agent] || 0) + 1;
     dropOffs.push({ from: STEP_IDS[i - 1], to: STEP_IDS[i], lost: before - after, rate: Math.round(((before - after) / before) * 100),

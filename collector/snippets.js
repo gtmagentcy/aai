@@ -4,7 +4,7 @@
  */
 export function snippets({ site = "yoursite", collector = "http://localhost:4319" } = {}) {
   const env = `AAI_COLLECTOR=${collector}\nAAI_SITE=${site}\nAAI_SECRET=<a long random string>`;
-  const install = "npm i github:NetanelBaruch/aai";
+  const install = "npm i github:gtmagentcy/aai";
   return {
     html: {
       title: "Browser tag", tap: "browser",
@@ -44,7 +44,7 @@ export function snippets({ site = "yoursite", collector = "http://localhost:4319
     logs: {
       title: "Access logs", tap: "server",
       note: "No code on the site: import a Combined Log Format file (nginx, Apache, most CDNs). IPs are hashed and dropped.",
-      files: [{ name: "shell", code: `npx github:NetanelBaruch/aai import access.log --site ${site}` }],
+      files: [{ name: "shell", code: `npx github:gtmagentcy/aai import access.log --site ${site}` }],
     },
   };
 }

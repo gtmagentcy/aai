@@ -11,8 +11,8 @@ stations as the AAI score. The "pixel" a site installs is three taps, not one sc
 
 The dashboard is also an MCP server, so the owner's own coding agent can read the funnel and make
 the fix. Everything runs on the owner's machine with no dependencies. A demo site with all three
-taps proves it end to end, and 12 tests pass. The repo is on GitHub, private
-(github.com/NetanelBaruch/aai), until the AAI announcement. A hosted collector (the paid line) is
+taps proves it end to end, and 12 tests pass. The repo is public on GitHub under
+the GTMagentcy organisation (github.com/gtmagentcy/aai) since 9 November 2026. A hosted collector (the paid line) is
 the next decision.
 
 ![The agent funnel on the demo site](../img/app-funnel.png)
@@ -105,13 +105,24 @@ Connect an agent: `claude mcp add --transport http aai-local http://localhost:43
 6. **M6: Launch**: npm package, public repo, a GitHub link on /aai/, a "measure your agent funnel"
    section, and an announcement post.
 
+## 3b. Dogfood: gtmagentcy.com, locally (2026-11-09)
+
+All three taps run on gtmagentcy's local dev server, behind `AAI_COLLECTOR`, with production
+untouched. A walk of 67 documented agents went through the real endpoints:
+Reach 68 → Understand 45 → Rules 28 → Act 19 → First value 13 (choose_model) → Account 4
+(request_meeting). A real browser visit with `utm_source=chatgpt.com` counted as a ChatGPT referral.
+
+It found a real gap: agents.md points agents at `/services/<slug>.html` for "agent readiness", but
+that page doesn't exist and returns a 404. It also improved the product: drop-off advice now reads
+the lint (when agents.md exists, the advice is about agents reaching it), and crawlers no longer
+count as drop-offs. The record and how to run it: [examples/gtmagentcy.md](../../examples/gtmagentcy.md).
+
 ## 4. Decisions for Netanel
 
 - [ ] **The npm name.** `aai` is taken by an unrelated package. Options: `@gtmagentcy/aai` (needs
       an npm org) or `aai-kit`. Until then, installing from GitHub works (`npm i
-      github:NetanelBaruch/aai`).
-- [ ] **When to make the repo public.** It's private now; the plan was to go public with the AAI
-      announcement.
+      github:gtmagentcy/aai`).
+- [x] **The repo is public**, under the gtmagentcy organization (Netanel, 2026-11-09).
 - [ ] **Dogfood on gtmagentcy.com (M2).** This changes the live site's functions and needs a
       reachable collector: a small always-on server, or wait for the hosted one.
 - [ ] **The hosted collector (M5).** Whether First Value becomes it, and when.

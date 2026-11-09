@@ -52,3 +52,13 @@ test("the store persists to JSONL and reloads", async () => {
   assert.equal(s2.events().length, 1);
   assert.equal(s2.sites()[0].site, "t");
 });
+
+test("fix advice follows the lint: missing file vs. agents not reaching it", async () => {
+  const { fixFor } = await import("../collector/mcp.js");
+  assert.match(fixFor("rules", null).fix, /^Publish \/agents\.md/);
+  const report = { checks: [{ id: "agents-md", pass: true }] };
+  const f = fixFor("rules", report);
+  assert.equal(f.foundByLint, true);
+  assert.match(f.fix, /agents\.md is there/);
+  assert.match(fixFor("rules", { checks: [{ id: "agents-md", pass: false }] }).fix, /^Publish/);
+});

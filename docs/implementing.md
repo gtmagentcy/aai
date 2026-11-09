@@ -14,7 +14,7 @@ serves that one job. Do the others later.
 
 Check `robots.txt` for `Disallow: /` under `GPTBot`, `ClaudeBot`, `PerplexityBot`,
 `OAI-SearchBot` or `*`, and for a bot wall in front of every page. Either one caps the score at 10.
-**Done:** `npx github:NetanelBaruch/aai yoursite.com` shows "AI crawlers are allowed".
+**Done:** `npx github:gtmagentcy/aai yoursite.com` shows "AI crawlers are allowed".
 
 ## 2. Render the content in the HTML (Discover)
 
@@ -74,5 +74,5 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - run: npx -y github:NetanelBaruch/aai https://yoursite.com --strict
+      - run: npx -y github:gtmagentcy/aai https://yoursite.com --strict
 ```

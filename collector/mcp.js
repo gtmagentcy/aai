@@ -17,14 +17,23 @@ const TOOLS = [
   { name: "get_install_snippet", description: "The code to install the AAI taps for a stack.", inputSchema: { type: "object", properties: { stack: { type: "string", enum: ["html", "express", "nextjs", "cloudflare", "vercel", "firebase", "mcp", "logs"] }, site: { type: "string" }, collector: { type: "string" } }, required: ["stack"] } },
 ];
 
-export function mcpHandler({ store, origin }) {
+/** The fix for a step; when the lint shows the step's checks passing, the "it exists, agents don't reach it" version. */
+export function fixFor(step, report) {
+  const fx = FIXES[step];
+  if (!fx) return null;
+  const ok = (id) => report?.checks?.find((c) => c.id === id)?.pass;
+  if (report && fx.checks && fx.present && fx.checks.every(ok)) return { title: fx.title, fix: fx.present, prompt: fx.presentPrompt, foundByLint: true };
+  return { title: fx.title, fix: fx.fix, prompt: fx.prompt };
+}
+
+export function mcpHandler({ store, origin, report = () => null }) {
   const call = (name, a = {}) => {
     switch (name) {
       case "list_sites": return store.sites();
       case "get_funnel": { const f = store.funnel({ site: a.site, days: a.days || 30 }); delete f.daily; return f; }
-      case "get_drop_offs": return store.funnel({ site: a.site, days: a.days || 30 }).dropOffs.map((d) => ({ ...d, fix: FIXES[d.to] }));
+      case "get_drop_offs": return store.funnel({ site: a.site, days: a.days || 30 }).dropOffs.map((d) => ({ ...d, fix: fixFor(d.to, report()) }));
       case "get_journey": { const j = store.journey(a.key); return j ? { ...j, steps: [...j.steps] } : { error: "No journey with that key." }; }
-      case "get_fix_prompt": return FIXES[a.step] || { error: "Unknown step." };
+      case "get_fix_prompt": return fixFor(a.step, report()) || { error: "Unknown step." };
       case "get_install_snippet": { const s = snippets({ site: a.site || "yoursite", collector: a.collector || origin })[a.stack]; return s || { error: "Unknown stack." }; }
       default: throw Object.assign(new Error("Unknown tool"), { code: -32602 });
     }

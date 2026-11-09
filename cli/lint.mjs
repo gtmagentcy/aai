@@ -2,7 +2,7 @@
  * The AAI lint as a module: lint(url) -> { url, checked, meta, checks, passed, total, estimate }.
  * Reads public pages only (about a dozen requests). Used by the CLI and by the local app.
  */
-const UA_DEFAULT = "aai-lint/0.2 (+https://github.com/NetanelBaruch/aai)";
+const UA_DEFAULT = "aai-lint/0.2 (+https://github.com/gtmagentcy/aai)";
 
 export async function lint(target) {
   const base = new URL(/^https?:\/\//.test(target) ? target : `https://${target}`);

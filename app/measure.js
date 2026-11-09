@@ -35,7 +35,9 @@
   function fixes() { return FIX ? Promise.resolve(FIX) : get("/api/fixes").catch(function () { return {}; }).then(function (f) { return (FIX = f); }); }
 
   /* ------------------------------------------------------------------ funnel */
-  function vFunnel(view, args) {
+  var REPORT = null;
+  function vFunnel(view, args, ctx) {
+    REPORT = (ctx && ctx.report) || null;
     var days = +(store("aai:days") || 30);
     view.innerHTML = '<p class="m-loading">Reading the collector…</p>';
     get("/api/sites").then(function (list) {
@@ -45,14 +47,21 @@
       return Promise.all([get("/api/funnel?site=" + encodeURIComponent(site) + "&days=" + days), fixes()]).then(function (x) { draw(view, site, days, x[0]); });
     });
   }
+  /** The fix for a step, aware of the lint: when the lint shows the step's checks passing, the thing exists and the problem is reaching it. */
+  function fixFor(step) {
+    var fx = (FIX && FIX[step]) || {};
+    if (REPORT && fx.checks && fx.present && fx.checks.every(function (id) { var c = REPORT.checks.find(function (x) { return x.id === id; }); return c && c.pass; }))
+      return { title: fx.title, fix: fx.present, prompt: fx.presentPrompt, present: true };
+    return fx;
+  }
 
   function empty(view) {
     view.innerHTML =
       '<header class="m-head"><div><p class="m-eyebrow">Measure</p><h1>The agent funnel</h1><p class="m-lede">How agents move through your site, from the first fetch to an account, measured on your own traffic. Nothing has arrived yet.</p></div></header>' +
       '<div class="m-empty">' +
         '<div class="m-empty-card"><b>Install the taps</b><p>A server tap, a browser tag and an action tap for your MCP server or API. Each one takes a few lines.</p><a class="btn btn-primary" href="#install">Install</a></div>' +
-        '<div class="m-empty-card"><b>Or see it with a demo</b><p>Starts a small demo site with all three taps and sends it about a hundred simulated agents.</p><pre class="m-code"><code>npx github:NetanelBaruch/aai demo</code></pre></div>' +
-        '<div class="m-empty-card"><b>Or import a log</b><p>No code on the site: read an access log (nginx, Apache, most CDNs). IPs are hashed and dropped.</p><pre class="m-code"><code>npx github:NetanelBaruch/aai import access.log --site you</code></pre></div>' +
+        '<div class="m-empty-card"><b>Or see it with a demo</b><p>Starts a small demo site with all three taps and sends it about a hundred simulated agents.</p><pre class="m-code"><code>npx github:gtmagentcy/aai demo</code></pre></div>' +
+        '<div class="m-empty-card"><b>Or import a log</b><p>No code on the site: read an access log (nginx, Apache, most CDNs). IPs are hashed and dropped.</p><pre class="m-code"><code>npx github:gtmagentcy/aai import access.log --site you</code></pre></div>' +
       "</div>";
     onLive(function () { route(); });
   }
@@ -87,12 +96,12 @@
           steps.map(function (s) { var v = a.steps[s.id] || 0, o = v ? 0.08 + 0.72 * (v / max) : 0; return '<td style="--o:' + o.toFixed(2) + '"' + (v ? "" : ' class="is-zero"') + ">" + (v ? n(v) : "·") + "</td>"; }).join("") + "</tr>";
       }).join("") + "</tbody></table></div>";
 
-    var drops = f.dropOffs.filter(function (d) { return d.from !== "reach" || d.agents.some(function (a) { return !/bot|crawler/i.test(a.label); }); }).slice(0, 4).map(function (d) {
-      var fx = FIX[d.to] || {};
+    var drops = f.dropOffs.slice(0, 4).map(function (d) {
+      var fx = fixFor(d.to);
       return '<article class="drop"><div class="drop-n"><b>' + n(d.lost) + "</b><span>" + d.rate + "% stop</span></div><div class=\"drop-b\">" +
         "<h3>After " + esc(STEP_LABEL[d.from]) + ", before " + esc(STEP_LABEL[d.to]) + ": " + esc(fx.title || "") + "</h3>" +
         '<p class="drop-who">Mostly ' + d.agents.map(function (a) { return esc(a.label) + " (" + a.n + ")"; }).join(", ") + "</p>" +
-        "<p>" + esc(fx.fix || "") + '</p><div class="drop-act"><button class="btn btn-outline" data-copy-fix="' + d.to + '">Copy the fix as a prompt</button></div></div></article>';
+        (fx.present ? '<p class="drop-lint">The lint found it on your site, so this is about agents reaching it.</p>' : "") + "<p>" + esc(fx.fix || "") + '</p><div class="drop-act"><button class="btn btn-outline" data-copy-fix="' + d.to + '">Copy the fix as a prompt</button></div></div></article>';
     }).join("");
 
     var recent = f.recent.slice(0, 10).map(function (r) {
@@ -134,7 +143,7 @@
   }
   function agentLabel(e) { return e.agent === "unknown" ? "Unnamed" : e.agent.replace(/-/g, " ").replace(/\b\w/g, function (c) { return c.toUpperCase(); }).replace("Chatgpt", "ChatGPT").replace("Oai", "OAI").replace("Gptbot", "GPTBot"); }
   function promptFor(step, site, f) {
-    var fx = FIX[step] || {}, d = f.dropOffs.find(function (x) { return x.to === step; });
+    var fx = fixFor(step), d = f.dropOffs.find(function (x) { return x.to === step; });
     return "AAI funnel for " + site + " (last " + f.days + " days): " + (d ? d.lost + " agent journeys (" + d.rate + "%) stopped after " + STEP_LABEL[d.from] + ", before " + STEP_LABEL[d.to] + "; mostly " + d.agents.map(function (a) { return a.label; }).join(", ") + "." : "") +
       "\n\nThe fix: " + (fx.fix || "") + "\n\n" + (fx.prompt || "") + "\n\nWhen you are done, tell me what changed so I can watch the funnel at " + origin + "/#funnel/" + encodeURIComponent(site) + ".";
   }

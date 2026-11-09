@@ -104,9 +104,9 @@ node cli/aai-lint.mjs yoursite.com --dir ./public  # the app can save files into
 ## 5. What to work on next
 
 **Waiting on Netanel**
-- [ ] Publish the repo: where (`NetanelBaruch/aai` by default, or the `gtmagentcy` org) and when.
+- [ ] Publish the repo: where (`gtmagentcy/aai` by default, or the `gtmagentcy` org) and when.
       The AAI announcement has been held on social since 2026-10-24. Command:
-      `cd ~/projects/aai && gh repo create NetanelBaruch/aai --public --source . --push`
+      `cd ~/projects/aai && gh repo create gtmagentcy/aai --public --source . --push`
 - [ ] Confirm the licences (MIT for code, CC BY 4.0 for text).
 - [ ] Deploy gtmagentcy.com from `feat/aai-landing` so `/aai/`, `/openapi.json` and
       `/.well-known/mcp.json` go live.

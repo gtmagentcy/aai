@@ -12,6 +12,6 @@ labels: implementation
 
 **What agents did** (which agents, same prompt, where each stopped):
 
-**Lint before / after** (`npx github:NetanelBaruch/aai yoursite.com --json`):
+**Lint before / after** (`npx github:gtmagentcy/aai yoursite.com --json`):
 
 **What the spec got wrong or missed:**
