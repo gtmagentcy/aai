@@ -41,7 +41,7 @@
   "homepage": "https://gtmagentcy.com/aai/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gtmagentcy/aai.git"
+    "url": "git+https://github.com/gtmagentcy/aai.git"
   },
   "exports": {
     "./taps/node.js": "./taps/node.js",
